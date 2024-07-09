@@ -2,6 +2,8 @@ import { useState } from 'react';
 import './BookForm.css';
 import { useDispatch } from 'react-redux';
 import { addBook } from '../../redux/books/actionCreators';
+import booksData from '../../data/books.json';
+import createBookWithID from '../../utils/createBookWithID';
 
 const BookForm = () => {
 
@@ -9,14 +11,17 @@ const BookForm = () => {
   const [author, setAuthor] = useState('');
   const dispatch = useDispatch();
 
+  const handleAddRandomBook = () => {
+    const book = booksData[Math.floor(Math.random() * booksData.length)];
+
+    dispatch(addBook(createBookWithID(book)));
+  };
+
   const handleSumbit = (e) => {
     e.preventDefault();
 
     if (title && author) {
-
-      const book = { title, author };
-
-      dispatch(addBook(book));
+      dispatch(addBook(createBookWithID({ title, author })));
       setTitle('');
       setAuthor('');
     }
@@ -38,7 +43,8 @@ const BookForm = () => {
             onChange={(e) => setAuthor(e.target.value)}></input>
         </div>
 
-        <button type='submit'>Add book</button>
+        <button type='submit'>Add Book</button>
+        <button type="button" onClick={handleAddRandomBook}>Add Random</button>
       </form>
     </div>
   );
