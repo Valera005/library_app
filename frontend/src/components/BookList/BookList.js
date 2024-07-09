@@ -18,18 +18,36 @@ const BookList = () => {
     dispatch(toggleFavorite(id));
   }
 
-  let filteredBooks = books.filter((book) => book.title.toLowerCase().includes(filterObj.title.toLowerCase()));
+  let filteredBooks = books.filter((book) => {
+    const matchesTitle = book.title.toLowerCase().includes(filterObj.title.toLowerCase());
+    const matchesAuthor = book.author.toLowerCase().includes(filterObj.author.toLowerCase());
+    const matchesFavorite = filterObj.onlyFavorite ? book.isFavorite : true;
 
+    return matchesAuthor && matchesTitle && matchesFavorite;
+  });
+
+  const highlightMatch = (text, filter) => {
+    if (!filter) return text;
+
+    const regex = new RegExp(`(${filter})`, 'gi');
+    return text.split(regex).map((subString, i) => {
+
+      if (subString.toLowerCase() === filter.toLowerCase())
+        return (<span className="highlight" key={i}>{subString}</span>);
+      return subString;
+    });
+  };
 
   return (
     <div className='app-block book-list'>
       <h2>Book List</h2>
-      {books.length === 0 ? (<p>No books available</p>) :
+      {filteredBooks.length === 0 ? (<p>No books available</p>) :
         (
           <ul>
             {filteredBooks.map((book, i) => {
               return <li key={book.id}>
-                <div className='book-info'>{++i}. {book.title} by <strong>{book.author}</strong></div>
+                <div className='book-info'>
+                  {++i}. {highlightMatch(book.title, filterObj.title)} by <strong>{highlightMatch(book.author, filterObj.author)}</strong></div>
                 <div className='book-actions'>
 
                   <span onClick={() => handleToggleFavorite(book.id)}>
