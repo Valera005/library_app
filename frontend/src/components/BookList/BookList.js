@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import './BookList.css';
-import store from '../../redux/store';
 import { BsBookmarkStarFill, BsBookmarkStar } from 'react-icons/bs';
-import { deleteBook, toggleFavorite } from "../../redux/books/booksSlice";
+import { deleteBook, toggleFavorite } from "../../redux/slices/booksSlice";
 
 const BookList = () => {
   const dispatch = useDispatch();
