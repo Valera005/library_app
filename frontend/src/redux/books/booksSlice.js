@@ -8,8 +8,7 @@ const booksSlice = createSlice({
   reducers: {
 
     addBook: (state, action) => {
-      console.log("add");
-      return [...state, action.payload];
+      state.push(action.payload);
     },
 
     deleteBook: (state, action) => {
@@ -17,8 +16,12 @@ const booksSlice = createSlice({
     },
 
     toggleFavorite: (state, action) => {
-      return state.map((book) => book.id === action.payload
-        ? { ...book, isFavorite: !book.isFavorite } : book);
+      state.forEach((book) => {
+        if (book.id === action.payload) book.isFavorite = !book.isFavorite;
+      });
+
+      // return state.map((book) => book.id === action.payload
+      //   ? { ...book, isFavorite: !book.isFavorite } : book);
     }
 
   }
