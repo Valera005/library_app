@@ -1,8 +1,16 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import createBookWithID from "../../utils/createBookWithID";
 import axios from "axios";
 
 const initialState = [];
+
+export const fetchBook = createAsyncThunk(
+  'books/fetchBook',
+  async () => {
+    const res = await axios.get("http://localhost:5000/random-book");
+    return res.data;
+  }
+);
 
 const booksSlice = createSlice({
   name: 'books',
@@ -26,29 +34,20 @@ const booksSlice = createSlice({
       //   ? { ...book, isFavorite: !book.isFavorite } : book);
     }
 
+  },
+
+  extraReducers: (builder) => {
+
+    builder.addCase(fetchBook.fulfilled, (state, action) => {
+      const book = action.payload;
+      if (book?.title && book?.author) {
+        state.push(createBookWithID(book, "API"));
+      }
+    });
   }
 });
 
 
 export const { addBook, deleteBook, toggleFavorite } = booksSlice.actions;
-
-export const thunkFunction = async (dispatch, getState) => {
-
-  console.log(getState());
-  // async action
-  try {
-    const res = await axios.get("http://localhost:4000/random-book");
-    if (res?.data?.title && res?.data?.author);
-    {
-      const book = res.data;
-      dispatch(addBook(createBookWithID({ title: book.title, author: book.author }, "API")));
-    }
-  }
-  catch (error) {
-    console.error('Error fetching random book');
-  }
-  console.log(getState());
-
-};
 
 export default booksSlice.reducer;
